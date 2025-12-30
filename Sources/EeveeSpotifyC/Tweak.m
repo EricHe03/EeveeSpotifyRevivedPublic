@@ -2,7 +2,17 @@
 #import <Foundation/Foundation.h>
 
 __attribute__((constructor)) static void init() {
-    // Initialize Orion - do not remove this line.
-    orion_init();
-    // Custom initialization code goes here.
+    @try {
+        NSLog(@"[EeveeSpotify] Initializing tweak...");
+        
+        // Initialize Orion - do not remove this line.
+        orion_init();
+        
+        NSLog(@"[EeveeSpotify] Tweak initialized successfully");
+        // Custom initialization code goes here.
+    }
+    @catch (NSException *exception) {
+        NSLog(@"[EeveeSpotify] ERROR: Failed to initialize tweak: %@", exception);
+        NSLog(@"[EeveeSpotify] Reason: %@", [exception reason]);
+    }
 }

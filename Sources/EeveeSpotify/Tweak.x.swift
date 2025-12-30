@@ -35,43 +35,61 @@ func activatePremiumPatchingGroup() {
 }
 
 struct EeveeSpotify: Tweak {
-    static let version = "6.2.2"
+    static let version = "6.2.3"
     
     static var hookTarget: VersionHookTarget {
         let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
+        
+        NSLog("[EeveeSpotify] Detected Spotify version: \(version)")
         
         switch version {
         case "9.0.48":
             return .lastAvailableiOS15
         case "8.9.8":
             return .lastAvailableiOS14
+        case "9.1.0", "9.1.6":
+            // Explicitly handle 9.1.x versions
+            return .latest
         default:
             return .latest
         }
     }
     
     init() {
-        if UserDefaults.experimentsOptions.showInstagramDestination {
-            InstgramDestinationGroup().activate()
-        }
+        NSLog("[EeveeSpotify] Swift tweak initialization starting...")
+        NSLog("[EeveeSpotify] Hook target: \(EeveeSpotify.hookTarget)")
         
-        if UserDefaults.darkPopUps {
-            DarkPopUps().activate()
-        }
-        
-        if UserDefaults.patchType.isPatching {
-            activatePremiumPatchingGroup()
-        }
-        
-        if UserDefaults.lyricsSource.isReplacingLyrics {
-            BaseLyricsGroup().activate()
+        do {
+            if UserDefaults.experimentsOptions.showInstagramDestination {
+                NSLog("[EeveeSpotify] Activating Instagram destination hooks")
+                InstgramDestinationGroup().activate()
+            }
             
-            if EeveeSpotify.hookTarget == .latest {
-                ModernLyricsGroup().activate()
+            if UserDefaults.darkPopUps {
+                NSLog("[EeveeSpotify] Activating dark popups hooks")
+                DarkPopUps().activate()
             }
-            else {
-                LegacyLyricsGroup().activate()
+            
+            if UserDefaults.patchType.isPatching {
+                NSLog("[EeveeSpotify] Activating premium patching hooks")
+                activatePremiumPatchingGroup()
             }
+            
+            if UserDefaults.lyricsSource.isReplacingLyrics {
+                NSLog("[EeveeSpotify] Activating lyrics hooks")
+                BaseLyricsGroup().activate()
+                
+                if EeveeSpotify.hookTarget == .latest {
+                    ModernLyricsGroup().activate()
+                }
+                else {
+                    LegacyLyricsGroup().activate()
+                }
+            }
+            
+            NSLog("[EeveeSpotify] Swift tweak initialization completed successfully")
+        } catch {
+            NSLog("[EeveeSpotify] ERROR during initialization: \(error)")
         }
     }
 }
