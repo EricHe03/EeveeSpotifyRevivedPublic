@@ -32,6 +32,7 @@ struct BasePremiumPatchingGroup: HookGroup { }
 struct IOS14PremiumPatchingGroup: HookGroup { }
 struct NonIOS14PremiumPatchingGroup: HookGroup { }
 struct IOS14And15PremiumPatchingGroup: HookGroup { }
+struct V91PremiumPatchingGroup: HookGroup { } // For Spotify 9.1.x versions
 struct LatestPremiumPatchingGroup: HookGroup { }
 
 func activatePremiumPatchingGroup() {
@@ -39,6 +40,11 @@ func activatePremiumPatchingGroup() {
     
     if EeveeSpotify.hookTarget == .lastAvailableiOS14 {
         IOS14PremiumPatchingGroup().activate()
+    }
+    else if EeveeSpotify.hookTarget == .v91 {
+        // 9.1.x versions: Use NonIOS14 hooks but skip offline content hooks
+        NonIOS14PremiumPatchingGroup().activate()
+        V91PremiumPatchingGroup().activate()
     }
     else {
         NonIOS14PremiumPatchingGroup().activate()
@@ -53,7 +59,7 @@ func activatePremiumPatchingGroup() {
 }
 
 struct EeveeSpotify: Tweak {
-    static let version = "6.2.6"
+    static let version = "6.2.7"
     
     static var hookTarget: VersionHookTarget {
         let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
@@ -66,9 +72,8 @@ struct EeveeSpotify: Tweak {
         case "8.9.8":
             return .lastAvailableiOS14
         case "9.1.0", "9.1.6":
-            // 9.1.x versions don't have modern classes like NPVScrollViewController
-            // Use iOS15 hooks for compatibility
-            return .lastAvailableiOS15
+            // 9.1.x versions don't have offline content helper classes
+            return .v91
         default:
             return .latest
         }
