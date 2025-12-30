@@ -2,10 +2,12 @@ import Orion
 import SwiftUI
 import UIKit
 
+// Settings integration - only works on non-9.1.x versions
+struct SettingsIntegrationGroup: HookGroup { }
+
 class ProfileSettingsSectionHook: ClassHook<NSObject> {
-    static var targetName: String {
-        return EeveeSpotify.hookTarget == .v91 ? "UIView" : "ProfileSettingsSection"
-    }
+    typealias Group = SettingsIntegrationGroup
+    static let targetName = "ProfileSettingsSection"
 
     func numberOfRows() -> Int {
         return 2

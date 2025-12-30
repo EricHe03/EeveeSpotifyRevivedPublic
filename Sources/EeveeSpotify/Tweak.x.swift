@@ -59,7 +59,7 @@ func activatePremiumPatchingGroup() {
 }
 
 struct EeveeSpotify: Tweak {
-    static let version = "6.2.12"
+    static let version = "6.2.13"
     
     static var hookTarget: VersionHookTarget {
         let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
@@ -143,6 +143,12 @@ struct EeveeSpotify: Tweak {
                 writeDebugLog("Legacy lyrics hooks activated successfully")
             }
         }
+        
+        // Always activate settings integration (except for 9.1.x which exits early above)
+        NSLog("[EeveeSpotify] Activating settings integration")
+        writeDebugLog("Activating settings integration")
+        SettingsIntegrationGroup().activate()
+        writeDebugLog("Settings integration activated successfully")
         
         NSLog("[EeveeSpotify] Swift tweak initialization completed successfully")
         writeDebugLog("Swift tweak initialization completed successfully")
