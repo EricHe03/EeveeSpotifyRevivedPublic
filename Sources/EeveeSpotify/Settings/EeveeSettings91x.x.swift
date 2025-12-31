@@ -5,27 +5,28 @@ import UIKit
 // Settings integration for 9.1.x - shows version banner on launch
 struct V91SettingsIntegrationGroup: HookGroup { }
 
-// Hook UIApplication to show version banner after launch
-class UIApplicationLaunchHook: ClassHook<UIApplication> {
+// Hook UIWindow to show version banner when it becomes key
+class UIWindowKeyHook: ClassHook<UIWindow> {
     typealias Group = V91SettingsIntegrationGroup
     
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        orig.applicationDidBecomeActive(application)
+    static var hasShownBanner = false
+    
+    func becomeKeyWindow() {
+        orig.becomeKeyWindow()
         
-        // Show version banner once, 2 seconds after launch
+        // Only show banner once
+        guard !Self.hasShownBanner else { return }
+        Self.hasShownBanner = true
+        
+        // Show banner after a short delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.showVersionBanner()
         }
     }
     
     func showVersionBanner() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else {
-            return
-        }
-        
         // Create a banner view
-        let banner = UIView(frame: CGRect(x: 20, y: -100, width: window.bounds.width - 40, height: 80))
+        let banner = UIView(frame: CGRect(x: 20, y: -100, width: target.bounds.width - 40, height: 80))
         banner.backgroundColor = .systemGreen
         banner.layer.cornerRadius = 12
         banner.layer.shadowColor = UIColor.black.cgColor
@@ -45,7 +46,7 @@ class UIApplicationLaunchHook: ClassHook<UIApplication> {
         """
         banner.addSubview(label)
         
-        window.addSubview(banner)
+        target.addSubview(banner)
         
         // Animate in
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: []) {
