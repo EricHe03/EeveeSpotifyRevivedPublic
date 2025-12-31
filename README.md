@@ -1,10 +1,18 @@
 ![Banner](Images/banner.png?)
 
-# The original EeveeSpotify repository was disabled due to a [DMCA takedown](https://github.com/github/dmca/blob/master/2025/08/2025-08-14-spotify.md). This repository will not contain the IPA packages, as they are most likely the reason for the takedown.
-
 # EeveeSpotify
 
+**Updated by Skye - Now supports Spotify 9.1.6!**
+
 This tweak makes Spotify think you have a Premium subscription, granting free listening, just like Spotilife, and provides some additional features like custom lyrics.
+
+> [!NOTE]
+> The original EeveeSpotify repository was disabled due to a [DMCA takedown](https://github.com/github/dmca/blob/master/2025/08/2025-08-14-spotify.md). This repository will not contain IPA packages in the repo itself.
+
+## Supported Spotify Versions
+
+- **Spotify 9.1.0** - Full feature support
+- **Spotify 9.1.6** - Premium patching + native lyrics (limited mode)
 
 ## How to build an EeveeSpotify IPA using Github actions
 > [!NOTE]
@@ -41,9 +49,9 @@ Please refrain from opening issues about the following features, as they are ser
 - AI DJ/Playlist
 - Spotify Connect (When using Spotify Connect, the device will act as a remote control and stream directly to the connected device. This is a server-sided limitation and is beyond the control of EeveeSpotify, so it will behave as if you have a Free subscription while using this feature.)
 
-It's possible to implement downloading locally, but it will never be included in EeveeSpotify (unless someone opens a pull request).
+**Note:** Spotify 9.1.6 runs in limited mode with premium patching only. Custom lyrics features are disabled for this version.
 
-## Lyrics Support
+## Lyrics Support (Spotify 9.1.0 only)
 
 EeveeSpotify replaces Spotify monthly limited lyrics with one of the following four lyrics providers:
 
@@ -59,35 +67,14 @@ If the tweak is unable to find a song or process the lyrics, you'll see a "Could
 
 ## How It Works
 
-**Starting with version 4.0, EeveeSpotify intercepts Spotify requests to load user data, deserializes it, and modifies the parameters in real-time. This method is the best so far and works incredibly stable, so the below explanation is no longer valid for v4.0 and later.**
+EeveeSpotify intercepts Spotify requests to load user data, deserializes it, and modifies the parameters in real-time. This method works incredibly stable across supported Spotify versions.
 
-Upon login, Spotify fetches user data and caches it in the `offline.bnk` file in the `/Library/Application Support/PersistentCache` directory. It uses its proprietary binary format to store data, incorporating a length byte before each value, among other conventions. Certain keys, such as `player-license`, `financial-product`, `streaming-rules`, and others, determine the user abilities.
+The tweak also sets `trackRowsEnabled` to `true`, allowing you to see track rows and liked tracks on artist pages just like with Premium.
 
-The tweak patches this file while initializing; Spotify loads it and assumes you have Premium. To be honest, it doesn't really patch due to challenges with dynamic length and varied bytes. The tweak extracts the username from the current `offline.bnk` file and inserts it into `premiumblank.bnk` (a file containing all premium values preset), replacing `offline.bnk`. Spotify may reload user data, and you'll be switched to the Free plan. When this happens, you'll see a popup with quick restart app and reset data actions.
+## Installation
 
-![Hex](Images/hex.png)
-
-Tweak also sets `trackRowsEnabled` in `SPTFreeTierArtistHubRemoteURLResolver` to `true`, so Spotify loads not just track names on the artist page, and adds a liked tracks row to the artist view models, allowing you to see the liked tracks row just like with Premium.
+For sideloaded IPAs, we recommend using **Sideloadly** or certificate-based signing tools like **ksign** for best compatibility. SideStore may have issues with complex tweaked IPAs.
 
 To open Spotify links in sideloaded app, use [OpenSpotifySafariExtension](https://github.com/BillyCurtis/OpenSpotifySafariExtension). Remember to activate it and allow access in Settings > Safari > Extensions.
 
-## Support
 
-EeveeSpotify has always been free and open-source project. However, I started accepting crypto donations if you'd like to support me. I really appreciate it:
-
-USDT (TRC-20): `TK4AZZLEWrahYUkKDG8r8Pr5BmkoFjs5zU`
-
-ETH/USDC/USDT: `0x4eFf79BdfCa9d3BC01a1d145eF343871bb0a3CdF`
-
-BTC: `bc1qspsnjenfq6wgj9a7pmm2xe3up4622wqxlem0g5`
-
-TON: `UQCgt8EfLdT3QOmnC11vsndUBHryi2suTcTOVCQqBgMdmg4l`
-
-LTC: `ltc1qup3v46fm05sxd278r63957wh4qf2esehevpy76`
-
-### Donors
-
-Thanks to the following donors for supporting the project and funding the automatic release workflow:
-
-- [Randy](https://github.com/randy-420)
-- [HAMO](https://github.com/hamzaharoon1314)
