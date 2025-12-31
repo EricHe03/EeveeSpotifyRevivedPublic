@@ -16,7 +16,7 @@ class SPTRootSettingsViewHook: ClassHook<UIView> {
         orig.didMoveToWindow()
         
         // Only add button once
-        guard !Self.hasAddedButton, self.window != nil else { return }
+        guard !Self.hasAddedButton, target.window != nil else { return }
         Self.hasAddedButton = true
         
         // Create a button in the top-right corner
@@ -26,11 +26,11 @@ class SPTRootSettingsViewHook: ClassHook<UIView> {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(showVersionInfo), for: .touchUpInside)
         
-        self.addSubview(button)
+        target.addSubview(button)
         
         NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 8),
-            button.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
+            button.topAnchor.constraint(equalTo: target.safeAreaLayoutGuide.topAnchor, constant: 8),
+            button.trailingAnchor.constraint(equalTo: target.trailingAnchor, constant: -16),
             button.widthAnchor.constraint(equalToConstant: 44),
             button.heightAnchor.constraint(equalToConstant: 44)
         ])
